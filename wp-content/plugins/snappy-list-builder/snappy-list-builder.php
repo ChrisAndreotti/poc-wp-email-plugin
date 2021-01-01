@@ -135,8 +135,6 @@ function slb_subscriber_metabox() {
 
 function slb_save_slb_subscriber_meta( $post_id, $post ) {
 
-
-
   //verify nonce
   if ( !isset( $_POST['slb_subscriber_nonce'] ) || !wp_verify_nonce( $_POST['slb_subscriber_nonce'], basename( __FILE__ ) ) ) {
     return $post_id;
@@ -160,6 +158,17 @@ function slb_save_slb_subscriber_meta( $post_id, $post ) {
   update_post_meta( $post_id, 'slb_first_name', $first_name );
   update_post_meta( $post_id, 'slb_last_name', $last_name );
   update_post_meta( $post_id, 'slb_email', $email );
+
+  //delete the existing post meta
+  delete_post_meta( $post_id, 'slb_list' );
+
+  if ( !empty( $lists ) ) {
+    //add new list meta
+    foreach ( $lists as $index=>$list_id ) {
+      // add list relational meta value
+      add_post_meta( $post_id, 'slb_list', $list_id, false ); //NOT unique meta key
+    }
+  }
 }
 
 add_action('save_post', 'slb_save_slb_subscriber_meta', 10, 2);
