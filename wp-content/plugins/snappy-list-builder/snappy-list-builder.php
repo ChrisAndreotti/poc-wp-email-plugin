@@ -189,3 +189,21 @@ function slb_save_slb_subscriber_meta( $post_id, $post ) {
 }
 
 add_action('save_post', 'slb_save_slb_subscriber_meta', 10, 2);
+
+
+/* CHANGE TITLE FOR SUBSCRIBER POSTS */
+
+function slb_edit_post_change_title() {
+  global $post;
+  
+  if ( $post->post_type == 'slb_subscriber' ) {
+    add_filter( 'the_title', 'slb_subscriber_title', 100, 2 );
+  }
+}
+
+add_action('admin_head-edit.php', 'slb_edit_post_change_title');
+
+function slb_subscriber_title( $title, $post_id ) {
+  $new_title = get_post_meta( $post_id, 'slb_first_name', true ) . ' ' . get_post_meta( $post_id, 'slb_last_name', true );
+  return $new_title;
+}
