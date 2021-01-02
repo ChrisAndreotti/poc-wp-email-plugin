@@ -69,6 +69,22 @@ function slb_subscriber_metabox() {
 
   wp_nonce_field( basename( __FILE__ ), 'slb_subscriber_nonce' );
 
+  //get the post ID via the global post object
+  global $post;
+  $post_id = $post->ID;
+
+  $first_name = get_post_meta($post_id, 'slb_first_name', true);
+  $first_name = (!empty($first_name) ? $first_name : '');
+
+  $last_name = get_post_meta($post_id, 'slb_last_name', true);
+  $last_name = (!empty($last_name) ? $last_name : '');
+
+  $email = get_post_meta($post_id, 'slb_email', true);
+  $email = (!empty($email) ? $email : '');
+
+  $lists = get_post_meta($post_id, 'slb_list', false); //return multiple values
+  $lists = (!empty($lists) ? $lists : []);
+
   ?>
   <style>
     .slb-field-row {
@@ -99,17 +115,17 @@ function slb_subscriber_metabox() {
   <div class="slb-field-row">
     <div class="slb-field-container">
       <label>First Name <span>*</span></label><br/>
-      <input type="text" name="slb_first_name" required="required" class="widefat" />
+      <input type="text" name="slb_first_name" required="required" class="widefat" value="<?=$first_name?>" />
     </div>
     <div class="slb-field-container">
       <label>Last Name <span>*</span></label><br/>
-      <input type="text" name="slb_last_name" required="required" class="widefat" />
+      <input type="text" name="slb_last_name" required="required" class="widefat" value="<?=$last_name?>" />
     </div>
   </div>
   <div class="slb-field-row">
     <div class="slb-field-container">
       <label>Email <span>*</span></label><br/>
-      <input type="email" name="slb_email" required="required" class="widefat" />
+      <input type="email" name="slb_email" required="required" class="widefat" value="<?=$email?>" />
     </div>
   </div>
   <div class="slb-field-row">
@@ -123,7 +139,8 @@ function slb_subscriber_metabox() {
 
           if ( !is_null( $list_query ) ) {
             foreach ( $list_query as $list ) {
-              echo '<li><label><input type="checkbox" name="slb_list[]" value="' . $list->ID . '" />' . $list->post_title . '</label></li>';
+              $checked = ( in_array( $list->ID, $lists ) ) ? 'checked="checked"' : '';
+              echo '<li><label><input type="checkbox" name="slb_list[]" value="' . $list->ID . '" ' . $checked . ' />' . $list->post_title . '</label></li>';
             }
           }
         ?>
