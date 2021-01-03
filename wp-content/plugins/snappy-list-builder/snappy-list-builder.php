@@ -15,7 +15,12 @@ Text Domain: snappy-list-builder
 
 /* HOOKS */
 
+//register all of our custom shortcodes on init
 add_action( 'init', 'slb_register_shortcodes');
+
+//register custom admin column headers
+add_filter('manage_edit-slb_subscriber_columns', 'slb_subscriber_column_headers');
+
 
 /* SHORTCODES */
 
@@ -48,4 +53,19 @@ function slb_form_shortcode( $args, $content="" ) {
   $output .= '<p class="slb-input-container"><input type="submit" name="slb_submit" value="Sign me up!">';
 
   return $output;
+}
+
+/* FILTERS */
+
+function slb_subscriber_column_headers( $columns ) {
+
+  //creating custom column header data
+  $columns = array(
+    'cb' => '<input type="checkbox">',
+    'title' => __('Subscriber Name'),
+    'email' => __('Email Address'),
+  );
+
+  //returning new columns
+  return $columns;
 }
