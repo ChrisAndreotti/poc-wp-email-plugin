@@ -21,6 +21,10 @@ add_action( 'init', 'slb_register_shortcodes');
 //register custom admin column headers
 add_filter('manage_edit-slb_subscriber_columns', 'slb_subscriber_column_headers');
 
+//register custom admin column data
+add_filter('manage_slb_subscriber_posts_custom_column', 'slb_subscriber_column_data', 1, 2);
+add_action('admin_head-edit.php', 'slb_register_custom_admin_titles');
+
 
 /* SHORTCODES */
 
@@ -68,4 +72,51 @@ function slb_subscriber_column_headers( $columns ) {
 
   //returning new columns
   return $columns;
+}
+
+function slb_subscriber_column_data( $column, $post_id ) {
+  $output = '';
+
+  switch( $column ) {
+    case 'title':
+      $fname = get_field('slb_fname', $post_id);
+      $lname = get_field('slb_lname', $post_id);
+      $output .= $fname . ' ' . $lname;
+      break;
+    case 'email':
+      $email = get_field('slb_email', $post_id);
+      $output .= $email;
+      break;
+  }
+
+  echo $output;
+}
+
+//register custom admin title column
+function slb_register_custom_admin_titles() {
+  add_filter(
+    'the_title', 
+    'slb_custom_admin_titles', 
+    99, 
+    2
+  );
+}
+
+//handle custom admin title "title" column data for post types without titles
+//this fixes the "Auto Draft" text from appearing by default
+function slb_custom_admin_titles( $title, $post_id ) {
+  global $post;
+  $output = $title;
+
+  if ( isset( $post->post_type ) ):
+    switch( $post->post_type ) {
+      case 'slb_subscriber':
+        $fname = get_field('slb_fname', $post_id);
+        $lname = get_field('slb_lname', $post_id);
+        $output = $fname . ' ' . $lname;
+        break;
+    }
+  endif;
+
+  return $output;
 }
