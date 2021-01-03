@@ -20,6 +20,7 @@ add_action( 'init', 'slb_register_shortcodes');
 
 //register custom admin column headers
 add_filter('manage_edit-slb_subscriber_columns', 'slb_subscriber_column_headers');
+add_filter('manage_edit-slb_list_columns', 'slb_list_column_headers');
 
 //register custom admin column data
 add_filter('manage_slb_subscriber_posts_custom_column', 'slb_subscriber_column_data', 1, 2);
@@ -61,9 +62,8 @@ function slb_form_shortcode( $args, $content="" ) {
 
 /* FILTERS */
 
+//create custom column header for Subscriber post types
 function slb_subscriber_column_headers( $columns ) {
-
-  //creating custom column header data
   $columns = array(
     'cb' => '<input type="checkbox">',
     'title' => __('Subscriber Name'),
@@ -119,4 +119,17 @@ function slb_custom_admin_titles( $title, $post_id ) {
   endif;
 
   return $output;
+}
+
+//create custom column header for List post types
+function slb_list_column_headers( $columns ) {
+
+  //creating custom column header data
+  $columns = array(
+    'cb' => '<input type="checkbox">',
+    'title' => __('List Name'),
+  );
+
+  //returning new columns
+  return $columns;
 }
